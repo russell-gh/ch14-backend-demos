@@ -18,12 +18,14 @@ router.post("/character", (req, res) => {
   }
 
   //check for duplicates
-  const indexOf = req.simspons.findIndex((item) => {
-    return (
-      item.character === character ||
-      item.characterDirection === characterDirection
-    );
+  const indexOf = req.simpsons.findIndex((item) => {
+    return item.character === character || item.quote === quote;
   });
+
+  if (indexOf > -1) {
+    res.send({ status: 0, reason: "Duplicate entry" });
+    return;
+  }
 
   req.simpsons.push({
     id: Math.round(Math.random() * 10000000),
