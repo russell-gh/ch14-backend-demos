@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/characters", (req, res) => {
-  console.log("Route ran");
   res.send({ status: 1, characters: req.simpsons });
 });
 

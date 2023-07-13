@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { genRandomString } = require("../utils/math");
 
 router.post("/character", (req, res) => {
   const { character, characterDirection, quote } = req.body;
@@ -28,7 +29,7 @@ router.post("/character", (req, res) => {
   }
 
   req.simpsons.push({
-    id: Math.round(Math.random() * 10000000),
+    id: genRandomString(16), //TBD
     character,
     characterDirection,
     quote,

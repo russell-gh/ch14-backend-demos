@@ -12,17 +12,17 @@ router.patch("/character/:id", (req, res) => {
     return;
   }
 
-  const { character, characterDirection, quote } = req.body;
-
   const indexOf = req.simpsons.findIndex((item) => {
     return item.id === id;
   });
 
   //check that user exists
-  if (indexOf < 0) {
+  if (indexOf === -1) {
     res.send({ status: 0, reason: "Id not found" });
     return;
   }
+
+  const { character, characterDirection, quote } = req.body;
 
   //for security we have repitition
   if (character && typeof character === "string") {
