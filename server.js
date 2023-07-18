@@ -1,19 +1,8 @@
 const express = require("express");
 const app = express();
-const simpsons = require("./simpsons.json");
-
-//adds an id to each char
-simpsons.forEach((item, index) => {
-  item.id = index + 1;
-});
 
 app.use((req, res, next) => {
   console.log("New Request!");
-  next();
-});
-
-app.use((req, res, next) => {
-  req.simpsons = simpsons;
   next();
 });
 

@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const asyncMySQL = require("../mysql/connection");
 
-router.delete("/character/:id", (req, res) => {
+router.delete("/character/:id", async (req, res) => {
   const id = Number(req.params.id);
 
   //check that id is a number
@@ -10,15 +11,8 @@ router.delete("/character/:id", (req, res) => {
     return;
   }
 
-  const indexOf = req.simpsons.findIndex((item) => {
-    return item.id === id;
-  });
-
-  if (indexOf < 0) {
-    res.send({ status: 0, reason: "Id not found, maybe already deleted" });
-  }
-
-  req.simpsons.splice(indexOf, 1);
+  await asyncMySQL(`DELETE FROM characters
+                                      WHERE id LIKE ${id};`);
 
   res.send({ status: 1 });
 });

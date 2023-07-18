@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const asyncMySQL = require("../mysql/connection");
+const e = require("express");
 
-router.get("/characters", (req, res) => {
-  res.send({ status: 1, characters: req.simpsons });
+router.get("/characters", async (req, res) => {
+  const results = await asyncMySQL(`SELECT name, quote, direction, image
+                                      FROM characters;`);
+
+  res.send({ status: 1, results });
 });
 
-router.get("/character/:id", (req, res) => {
+router.get("/character/:id", async (req, res) => {
   const id = Number(req.params.id);
 
   //check that id is a number
@@ -14,18 +19,17 @@ router.get("/character/:id", (req, res) => {
     return;
   }
 
-  //copy and find the specific character
-  const _simpsons = [...req.simpsons];
-  const character = _simpsons.find((char) => {
-    return char.id === id;
-  });
+  //ask sql for the data
+  const results = await asyncMySQL(`SELECT name, quote, direction, image
+                                      FROM characters
+                                        WHERE id LIKE ${id};`);
 
-  //check that char exists
-  if (!character) {
-    res.send({ status: 0, reason: "Id not found" });
+  if (results.length > 0) {
+    res.send({ status: 1, results });
+    return;
   }
 
-  res.send({ status: 1, character });
+  res.send({ status: 0, reason: "ID not found" });
 });
 
 module.exports = router;
