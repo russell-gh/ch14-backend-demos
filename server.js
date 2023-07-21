@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+
+app.use(cors()); //just fixes it for now!!!
 
 app.use((req, res, next) => {
   console.log("New Request!");
@@ -9,10 +12,8 @@ app.use((req, res, next) => {
 //convert the body to json
 app.use(express.json());
 
-app.use("/get", require("./routes/get"));
-app.use("/delete", require("./routes/delete"));
-app.use("/add", require("./routes/add"));
-app.use("/update", require("./routes/update"));
+app.use("/character", require("./routes/character"));
+app.use("/user", require("./routes/user"));
 
 const port = process.env.PORT || 6001;
 app.listen(port, () => {
