@@ -5,9 +5,9 @@ module.exports = {
                       VALUES
                           ("${email}", "${password}")`;
   },
-  deleteCharacter: (id) => {
+  deleteCharacter: (id, userId) => {
     return `DELETE FROM characters
-              WHERE id LIKE ${id};`;
+              WHERE id LIKE ${id} AND user_id LIKE ${userId};`;
   },
 
   addCharacter: (character, quote, characterDirection, userId) => {
@@ -25,9 +25,10 @@ module.exports = {
                                         WHERE user_id LIKE ${id};`;
   },
 
-  updateCharacter: (key, value, id) => {
+  updateCharacter: (key, value, id, userId) => {
     return `UPDATE characters SET ${key} = "${value}"
-                        WHERE id LIKE "${id}";`;
+                        WHERE id LIKE "${id}"
+                          AND user_id LIKE "${userId}";`;
   },
 
   checkUserCreds: (email, sha256Password) => {

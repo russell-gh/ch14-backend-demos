@@ -18,9 +18,13 @@ router.delete("/:id", async (req, res) => {
     return;
   }
 
-  await asyncMySQL(deleteCharacter(id));
+  const result = await asyncMySQL(deleteCharacter(id, req.validatedUserId));
 
-  res.send({ status: 1 });
+  if (result.affectedRows > 0) {
+    res.send({ status: 1 });
+  } else {
+    res.send({ status: 0, reason: "Delete failed" });
+  }
 });
 
 router.post("/", async (req, res) => {
@@ -67,14 +71,24 @@ router.patch("/:id", async (req, res) => {
   try {
     //for security we have repitition
     if (character && typeof character === "string") {
-      console.log(updateCharacter("character", character, id));
-      await asyncMySQL(updateCharacter("name", character, id));
+      await asyncMySQL(
+        updateCharacter("name", character, id, req.validatedUserId)
+      );
     }
     if (quote && typeof quote === "string") {
-      await asyncMySQL(updateCharacter("quote", quote, id));
+      await asyncMySQL(
+        updateCharacter("quote", quote, id, req.validatedUserId)
+      );
     }
     if (allowableDirections.includes(characterDirection)) {
-      await asyncMySQL(updateCharacter("direction", characterDirection, id));
+      await asyncMySQL(
+        updateCharacter(
+          "direction",
+          characterDirection,
+          id,
+          req.validatedUserId
+        )
+      );
     }
   } catch (error) {
     res.send({ status: 0, reason: error.sqlMessage });
@@ -82,16 +96,7 @@ router.patch("/:id", async (req, res) => {
   res.send({ status: 1 });
 });
 
-router.get("/:id", async (req, res) => {
-  console.log(req.validatedUserId);
-  const id = Number(req.params.id);
-
-  //check that id is a number
-  if (Number.isNaN(id)) {
-    res.send({ status: 0, reason: "Invalid id" });
-    return;
-  }
-
+router.get("/", async (req, res) => {
   //ask sql for the data
   const results = await asyncMySQL(getById(req.validatedUserId));
 

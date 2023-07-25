@@ -3,6 +3,9 @@ const app = express();
 const cors = require("cors");
 const asyncMySQL = require("./mysql/connection");
 const checkToken = require("./middleware/auth");
+const limiter = require("./middleware/limiter");
+
+app.use(limiter);
 
 app.use(cors()); //just fixes it for now!!!
 
