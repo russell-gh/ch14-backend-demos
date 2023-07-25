@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { genRandomString } = require("../utils/math");
 const asyncMySQL = require("../mysql/connection");
+const {
+  deleteCharacter,
+  addCharacter,
+  getById,
+  updateCharacter,
+} = require("../mysql/queries");
 
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
@@ -12,15 +18,14 @@ router.delete("/:id", async (req, res) => {
     return;
   }
 
-  await asyncMySQL(`DELETE FROM characters
-                                      WHERE id LIKE ${id};`);
+  await asyncMySQL(deleteCharacter(id));
 
   res.send({ status: 1 });
 });
 
 router.post("/", async (req, res) => {
   //adding
-  const { character, characterDirection, quote, userId } = req.body;
+  const { character, characterDirection, quote } = req.body;
 
   //check the contents
   if (
@@ -36,13 +41,9 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    await asyncMySQL(`INSERT INTO characters
-                        (name, quote, direction, user_id)
-                          VALUES
-                            ("${character}", 
-                             "${quote}", 
-                             "${characterDirection}", 
-                             "${userId}")`);
+    await asyncMySQL(
+      addCharacter(character, quote, characterDirection, req.validatedUserId)
+    );
     res.send({ status: 1 });
   } catch (error) {
     console.log(error);
@@ -66,16 +67,14 @@ router.patch("/:id", async (req, res) => {
   try {
     //for security we have repitition
     if (character && typeof character === "string") {
-      await asyncMySQL(`UPDATE characters SET name = "${character}"
-                        WHERE id LIKE "${id}";`);
+      console.log(updateCharacter("character", character, id));
+      await asyncMySQL(updateCharacter("name", character, id));
     }
     if (quote && typeof quote === "string") {
-      await asyncMySQL(`UPDATE characters SET quote = "${quote}"
-                        WHERE id LIKE "${id}";`);
+      await asyncMySQL(updateCharacter("quote", quote, id));
     }
     if (allowableDirections.includes(characterDirection)) {
-      await asyncMySQL(`UPDATE characters SET direction = "${characterDirection}"
-                        WHERE id LIKE "${id}";`);
+      await asyncMySQL(updateCharacter("direction", characterDirection, id));
     }
   } catch (error) {
     res.send({ status: 0, reason: error.sqlMessage });
@@ -84,6 +83,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  console.log(req.validatedUserId);
   const id = Number(req.params.id);
 
   //check that id is a number
@@ -93,9 +93,7 @@ router.get("/:id", async (req, res) => {
   }
 
   //ask sql for the data
-  const results = await asyncMySQL(`SELECT name, quote, direction, image
-                                      FROM characters
-                                        WHERE id LIKE ${id};`);
+  const results = await asyncMySQL(getById(req.validatedUserId));
 
   if (results.length > 0) {
     res.send({ status: 1, results });

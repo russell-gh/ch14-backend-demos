@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const asyncMySQL = require("./mysql/connection");
+const checkToken = require("./middleware/auth");
 
 app.use(cors()); //just fixes it for now!!!
 
@@ -12,8 +14,8 @@ app.use((req, res, next) => {
 //convert the body to json
 app.use(express.json());
 
-app.use("/character", require("./routes/character"));
-app.use("/user", require("./routes/user"));
+app.use("/character", checkToken, require("./routes/character"));
+app.use("/account", require("./routes/account"));
 
 const port = process.env.PORT || 6001;
 app.listen(port, () => {
