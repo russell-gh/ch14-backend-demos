@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { genRandomString } = require("../utils/math");
 const asyncMySQL = require("../mysql/connection");
 const {
   deleteCharacter,
