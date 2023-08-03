@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/characters", (req, res) => {
-  res.send({ status: 1, characters: req.simpsons });
+  res.send({ status: 2, characters: req.simpsons });
 });
 
 router.get("/character/:id", (req, res) => {
