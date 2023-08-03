@@ -41,6 +41,7 @@ router.post("/register", async (req, res) => {
     const result = await asyncMySQL(addUser(email, sha256Password));
     res.send({ status: 1, userId: result.insertId });
   } catch (e) {
+    console.log(e);
     res.send({ status: 0 });
   }
 });
