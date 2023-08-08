@@ -19,10 +19,11 @@ module.exports = {
                              "${characterDirection}", 
                              "${userId}")`;
   },
-  getById: (id) => {
+  getById: (order) => {
     return `SELECT name, quote, direction, image
                                       FROM characters
-                                        WHERE user_id LIKE ${id};`;
+                                        WHERE user_id LIKE ?
+                                          ORDER BY name ${order};`;
   },
 
   updateCharacter: (key, value, id, userId) => {
@@ -31,10 +32,10 @@ module.exports = {
                           AND user_id LIKE "${userId}";`;
   },
 
-  checkUserCreds: (email, sha256Password) => {
+  checkUserCreds: () => {
     return `SELECT id FROM users
-              WHERE email LIKE "${email}"
-                AND password LIKE "${sha256Password}";`;
+              WHERE email = ?
+                AND password = ?;`;
   },
 
   addToken: (userId, token) => {

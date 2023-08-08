@@ -5,15 +5,11 @@ const cors = require("cors");
 const asyncMySQL = require("./mysql/connection");
 const checkToken = require("./middleware/auth");
 const limiter = require("./middleware/limiter");
+const chalk = require("chalk");
 
 app.use(limiter);
 
 app.use(cors()); //just fixes it for now!!!
-
-app.use((req, res, next) => {
-  console.log("New Request!");
-  next();
-});
 
 //convert the body to json
 app.use(express.json());

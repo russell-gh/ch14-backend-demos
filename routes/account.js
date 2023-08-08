@@ -4,6 +4,7 @@ const asyncMySQL = require("../mysql/connection");
 const { addUser, checkUserCreds, addToken } = require("../mysql/queries");
 const sha256 = require("sha256");
 const { genRandomString } = require("../utils/math");
+const chalk = require("chalk");
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -11,11 +12,19 @@ router.post("/login", async (req, res) => {
   //hash the password
   const sha256Password = sha256(password + "cohort14isgreat");
 
+  //to see what is going on
+  console.log(chalk.red("BODY:" + JSON.stringify(req.body)));
+  console.log(chalk.blue("EMAIL:" + req.body.email));
+  console.log(chalk.green("PASSWORD:" + req.body.password));
+  console.log(chalk.white("QUERY: " + checkUserCreds(email, sha256Password)));
+
   //compare the hashed version to the stored one
   try {
-    const results = await asyncMySQL(checkUserCreds(email, sha256Password));
+    const results = await asyncMySQL(checkUserCreds(), [email, sha256Password]); //prepared statement
 
-    if (results.length > 0) {
+    console.log(chalk.grey("RESULTS: " + JSON.stringify(results)));
+
+    if (results.length === 1) {
       const token = genRandomString(128);
 
       asyncMySQL(addToken(results[0].id, token));
