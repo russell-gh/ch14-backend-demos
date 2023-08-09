@@ -38,11 +38,18 @@ module.exports = {
                 AND password = ?;`;
   },
 
-  addToken: (userId, token) => {
+  addToken: (userId, token, browserTempToken, emailTempToken, ip) => {
     return `INSERT INTO tokens
-              (user_id, token)
+              (user_id, token, browser_temp_token, email_temp_token, browser_ip)
                 VALUES
-                  ("${userId}", "${token}")`;
+                  ("${userId}", "${token}", "${browserTempToken}", "${emailTempToken}", "${ip}");`;
+  },
+
+  getTokenByBrowserEmail: (browserTempToken, emailTempToken) => {
+    return `SELECT token 
+              FROM tokens
+                WHERE browser_temp_token = "${browserTempToken}"
+                  AND email_temp_token = "${emailTempToken}";`;
   },
 
   getIdByToken: (token) => {
