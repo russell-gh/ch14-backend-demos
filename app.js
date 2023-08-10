@@ -6,6 +6,9 @@ const asyncMySQL = require("./mysql/connection");
 const checkToken = require("./middleware/auth");
 const limiter = require("./middleware/limiter");
 const chalk = require("chalk");
+const helmet = require("helmet");
+
+app.use(helmet());
 
 app.use(limiter);
 
